@@ -12,7 +12,7 @@
     "sidebar": "hide"
   },
   "tabs": {
-    "mode": "on",
+    "mode": "off",
     "layout": "horizontal"
   },
   "diffs": {
