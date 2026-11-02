@@ -11,6 +11,8 @@ I have ADHD — keep responses short and scannable.
 
 - Use TypeScript for new application and library code.
 - New projects: use pnpm, oxlint for linting, oxfmt for formatting, and Vitest for testing.
+- Package manager: pnpm, never npm, yarn, or bun.
+- Prisma: never run migrations yourself; give me the command to run instead.
 - Existing projects: follow their configured language and tooling; do not introduce new tools without asking.
 
 ## Tool Preferences
@@ -29,11 +31,11 @@ I have ADHD — keep responses short and scannable.
 - When asked to commit, keep unrelated changes separate and tests with their code. Amend small follow-up fixes into the matching unpublished commit; ask before rewriting shared or ambiguous history.
 - Stack dependent GitButler branches rather than mixing changes; create stacked PRs with `but pr`. PRs are drafts unless told they're ready for review.
 - If other agents' branches are applied, check before pulling and ask if conflicts or branch movement are expected. Ask before resolving semantic conflicts or conflicts involving others' work.
-- Commit messages: `type(scope): summary`, succinct.
+- Commit messages: `type(scope): summary`, succinct. No `Co-Authored-By` trailer.
 
 ## Dotfiles
 
-- `~/.codex/` is symlinked from `~/dotfiles/.codex/`; edits land in that repository.
+- `~/.codex/AGENTS.md` is symlinked from `~/dotfiles/.codex/`; edits land in that repository. `~/.codex/config.toml` is machine-local and not tracked (see `config.toml.example`).
 - Skills may link onward to another repository. Check symlink targets before editing and change the source file.
 
 <!-- gitbutler-agent-setup:start -->

@@ -61,5 +61,5 @@ result
 .claude/rules/gitbutler.md
 # Keep portable Codex configuration; ignore generated and machine-local data.
 .codex/*
-!.codex/config.toml
+!.codex/config.toml.example
 !.codex/AGENTS.md
