@@ -1,0 +1,11 @@
+# Replaces stow's built-in defaults, so the defaults are repeated here.
+\.git
+\.gitignore
+\.gitmodules
+^/README.*
+^/LICENSE.*
+^/COPYING
+\.DS_Store
+.+~
+# Runtime lock files apps drop next to the real config (e.g. openlogi).
+\.lock$
