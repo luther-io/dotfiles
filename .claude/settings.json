@@ -11,7 +11,7 @@
   "permissions": {
     "defaultMode": "auto"
   },
-  "model": "opus",
+  "model": "fable",
   "deniedMcpServers": [
     {
       "serverUrl": "https://mcp.notion.com/*"
