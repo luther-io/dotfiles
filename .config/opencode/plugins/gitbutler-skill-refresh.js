@@ -8,7 +8,17 @@ import { join } from "node:path";
 
 const SCRIPT = join(homedir(), "work/personal/skills/scripts/refresh-gitbutler-skill.sh");
 
-export const GitbutlerSkillRefresh = async () => {
+const runRefresh = () => {
   execFile("bash", [SCRIPT], { timeout: 30_000 }, () => {});
-  return {};
+};
+
+export default {
+  id: "gitbutler-skill-refresh",
+  async setup() {
+    runRefresh();
+  },
+  async server() {
+    runRefresh();
+    return {};
+  },
 };
