@@ -37,15 +37,15 @@
               "min": 90
             },
             {
-              "id": "key-sheet",
+              "id": "git-status",
               "type": "block",
               "content": {
-                "mod": "key-sheet"
+                "mod": "git-status"
               },
               "size": {
-                "px": 480
+                "px": 150
               },
-              "min": 90
+              "min": 60
             },
             {
               "id": "agents",
