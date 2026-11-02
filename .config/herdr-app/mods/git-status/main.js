@@ -1,4 +1,4 @@
-// The git state of the focused pane's folder: repo, branch, upstream, changes and last commit. Read-only.
+// The git state of the focused pane's folder: repo, branch, upstream, last commit and the changed files. Read-only.
 
 import { View, div, svg } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
@@ -6,6 +6,8 @@ import { exec, focused, layout, panes, spaces, theme, watchFolder, window } from
 
 // Edits outside .git don't wake the watch: looked for this often while the window is in front.
 const FALLBACK = 10000;
+// Rows drawn; the counts above stay exact.
+const MAX_FILES = 200;
 
 function find(node, id) {
   if (node?.id === id) return node;
@@ -25,8 +27,15 @@ function ago(seconds) {
   return `${Math.floor(m / 10080)}w`;
 }
 
+// The path at the end of a porcelain v2 line: `skip` fields come first, a rename adds its old path after a tab.
+function pathOf(line, skip) {
+  const path = line.split(" ").slice(skip).join(" ").split("\t")[0];
+  return path.startsWith('"') ? path.slice(1, -1).replace(/\\(["\\])/g, "$1") : path;
+}
+
 function parseStatus(text) {
-  const g = { branch: null, oid: null, upstream: null, ahead: 0, behind: 0, stash: 0, staged: 0, modified: 0, untracked: 0, conflicts: 0 };
+  const g = { branch: null, oid: null, upstream: null, ahead: 0, behind: 0, stash: 0, staged: 0, modified: 0, untracked: 0, conflicts: 0, files: [] };
+  const add = (rank, kind, code, path) => g.files.push({ rank, kind, code, path });
   for (const line of text.split("\n")) {
     if (line.startsWith("# branch.oid ")) g.oid = line.slice(13);
     else if (line.startsWith("# branch.head ")) g.branch = line.slice(14);
@@ -37,11 +46,22 @@ function parseStatus(text) {
       g.behind = Math.abs(parseInt(b, 10)) || 0;
     } else if (line.startsWith("# stash ")) g.stash = parseInt(line.slice(8), 10) || 0;
     else if (line.startsWith("1 ") || line.startsWith("2 ")) {
-      if (line[2] !== ".") g.staged++;
-      if (line[3] !== ".") g.modified++;
-    } else if (line.startsWith("u ")) g.conflicts++;
-    else if (line.startsWith("? ")) g.untracked++;
+      const [x, y] = [line[2], line[3]];
+      if (x !== ".") g.staged++;
+      if (y !== ".") g.modified++;
+      const path = pathOf(line, line[0] === "1" ? 8 : 9);
+      // Staged and then edited again counts as both, and lists once, with what's still unstaged.
+      if (y !== ".") add(2, "modified", y, path);
+      else add(1, "staged", x, path);
+    } else if (line.startsWith("u ")) {
+      g.conflicts++;
+      add(0, "conflict", "U", pathOf(line, 10));
+    } else if (line.startsWith("? ")) {
+      g.untracked++;
+      add(3, "new", "N", pathOf(line, 1));
+    }
   }
+  g.files.sort((a, b) => a.rank - b.rank);
   return g;
 }
 
@@ -108,7 +128,7 @@ export default class GitStatus extends View {
     const [on, cwd] = JSON.parse(key);
     const git = (...args) => exec("git", ["--no-optional-locks", "-c", "core.fsmonitor=false", ...args], { cwd, on });
     try {
-      const st = await git("status", "--porcelain=v2", "--branch", "--show-stash");
+      const st = await git("-c", "core.quotePath=false", "status", "--porcelain=v2", "--branch", "--show-stash");
       if (st.code !== 0) return null;
       const info = parseStatus(st.stdout);
       const where = await git("rev-parse", "--show-toplevel", "--path-format=absolute", "--git-common-dir");
@@ -175,13 +195,26 @@ export default class GitStatus extends View {
         .child(div().min_w(0).flex_1().truncate().text_color(t.foreground).child(branch ?? ""))
         .when(g.ahead > 0, (el) => el.child(div().flex_none().text_color(t.ansi2).child(`↑${g.ahead}`)))
         .when(g.behind > 0, (el) => el.child(div().flex_none().text_color(t.ansi1).child(`↓${g.behind}`))))
-      .child(div().min_w(0).truncate().text_color(t.dim).child(g.upstream ? `→ ${g.upstream}` : "No upstream"))
+      .child(h_flex().gap(6).items_center()
+        .child(svg("mods/git-status/cloud.svg").size(12).flex_none().text_color(t.dim))
+        .child(div().min_w(0).flex_1().truncate().text_color(t.dim).child(g.upstream ?? "No upstream")))
+      .when(Boolean(g.commit), (el) => el.child(h_flex().gap(6).items_center().text_color(t.dim)
+        .child(div().min_w(0).flex_1().truncate().child(g.commit.subject))
+        .child(div().flex_none().child(ago(g.commit.time)))))
       .child(h_flex().gap(8).flex_wrap().items_center()
         .when(changes.length === 0, (el) => el.child(div().text_color(t.dim).child("Clean")))
         .children(changes)
         .when(g.stash > 0, (el) => el.child(div().flex_none().text_color(t.dim).child(`${g.stash} stashed`))))
-      .when(Boolean(g.commit), (el) => el.child(h_flex().gap(6).items_center().text_color(t.dim)
-        .child(div().min_w(0).flex_1().truncate().child(g.commit.subject))
-        .child(div().flex_none().child(ago(g.commit.time))))));
+      .children(g.files.slice(0, MAX_FILES).map((f, i) => {
+        const trimmed = f.path.replace(/\/$/, ""), at = trimmed.lastIndexOf("/");
+        const name = trimmed.slice(at + 1) + (f.path.endsWith("/") ? "/" : "");
+        const dir = at < 0 ? "" : trimmed.slice(0, at);
+        const color = { conflict: t.blocked, staged: t.ansi2, modified: t.ansi3, new: t.muted }[f.kind];
+        return h_flex().id(`file-${i}`).h(18).flex_none().gap(6).items_center()
+          .child(div().w(10).flex_none().text_size(11).font_medium().text_color(color).child(f.code))
+          .child(div().flex_none().max_w(130).truncate().text_color(t.foreground).child(name))
+          .child(div().flex_1().min_w(0).truncate().text_size(11).text_color(t.dim).child(dir));
+      }))
+      .when(g.files.length > MAX_FILES, (el) => el.child(div().text_color(t.dim).child(`+${g.files.length - MAX_FILES} more`))));
   }
 }

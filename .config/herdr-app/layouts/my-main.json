@@ -43,9 +43,9 @@
                 "mod": "git-status"
               },
               "size": {
-                "px": 150
+                "weight": 1
               },
-              "min": 60
+              "min": 120
             },
             {
               "id": "agents",
