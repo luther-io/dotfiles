@@ -51,6 +51,9 @@ result
 !.config/herdr-app/mods/git-status/
 .config/herdr-app/mods/git-status/gpui-kit.d.ts
 .config/herdr-app/mods/git-status/jsconfig.json
+!.config/herdr-app/mods/my-changes/
+.config/herdr-app/mods/my-changes/gpui-kit.d.ts
+.config/herdr-app/mods/my-changes/jsconfig.json
 !.config/herdr-app/mods/glow-files/
 .config/herdr-app/mods/glow-files/gpui-kit.d.ts
 .config/herdr-app/mods/glow-files/jsconfig.json

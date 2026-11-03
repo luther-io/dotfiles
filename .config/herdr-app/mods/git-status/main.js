@@ -2,7 +2,7 @@
 
 import { View, div, svg } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
-import { exec, focused, layout, panes, spaces, theme, watchFolder, window } from "herdr";
+import { exec, focused, layout, panes, run, setShared, spaces, theme, watchFolder, window } from "herdr";
 
 // Edits outside .git don't wake the watch: looked for this often while the window is in front.
 const FALLBACK = 10000;
@@ -165,6 +165,13 @@ export default class GitStatus extends View {
     });
   }
 
+  // A click asks the panel on the right to show that file's diff.
+  open(path) {
+    setShared("changes.open", { path, at: Date.now() });
+    run("layout.select", { stack: "panel-body", child: "changes" });
+    run("layout.show", { id: "panel" });
+  }
+
   render() {
     const t = theme();
     const root = v_flex().id("git-status-root").size_full().min_h(0).bg(t.chrome).border_t(1).border_color(t.border).text_size(12);
@@ -210,7 +217,8 @@ export default class GitStatus extends View {
         const name = trimmed.slice(at + 1) + (f.path.endsWith("/") ? "/" : "");
         const dir = at < 0 ? "" : trimmed.slice(0, at);
         const color = { conflict: t.blocked, staged: t.ansi2, modified: t.ansi3, new: t.muted }[f.kind];
-        return h_flex().id(`file-${i}`).h(18).flex_none().gap(6).items_center()
+        return h_flex().id(`file-${i}`).h(18).flex_none().gap(6).items_center().mx(-4).px(4).rounded(4).cursor_pointer()
+          .hover((s) => s.bg(t.hover)).on_click(() => this.open(f.path))
           .child(div().w(10).flex_none().text_size(11).font_medium().text_color(color).child(f.code))
           .child(div().flex_none().max_w(130).truncate().text_color(t.foreground).child(name))
           .child(div().flex_1().min_w(0).truncate().text_size(11).text_color(t.dim).child(dir));
