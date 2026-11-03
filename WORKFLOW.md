@@ -75,8 +75,9 @@ available; on narrow windows Herdr gives tabs priority over the reminder.
 
 ## Markdown in Herdr App
 
-The desktop app's `my-main` toolbar also shows separate Corpus Christi, Barcelona,
-and Dubai clock buttons immediately left of the **+** button. They use 24-hour time,
+The desktop app's `my-main` toolbar shows clock buttons ordered west to east:
+San Francisco, Phoenix, Corpus Christi, NYC, Barcelona, and Dubai, immediately
+left of the **+** button. They use 24-hour time,
 refresh each minute, and follow daylight saving rules automatically. Hover
 or click a clock for its local date and timezone. The personal `world-clock-tabs`
 mod uses local Python 3.9+ and system timezone data; no network service is needed.

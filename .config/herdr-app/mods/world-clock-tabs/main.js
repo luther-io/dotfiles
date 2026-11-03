@@ -3,7 +3,10 @@ import { h_flex } from "gpui-base";
 import { spaces, panes, run, openOverlay, theme, window, shared, layout, settings, exec, appHome, notify } from "herdr";
 
 const CLOCKS = [
+  { city: "San Francisco", zone: "America/Los_Angeles", width: 170 },
+  { city: "Phoenix", zone: "America/Phoenix", width: 138 },
   { city: "Corpus Christi", zone: "America/Chicago", width: 170 },
+  { city: "NYC", zone: "America/New_York", width: 112 },
   { city: "Barcelona", zone: "Europe/Madrid", width: 148 },
   { city: "Dubai", zone: "Asia/Dubai", width: 122 },
 ];
