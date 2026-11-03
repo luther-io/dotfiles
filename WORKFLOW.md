@@ -73,6 +73,31 @@ no supported configuration or plugin surface for a standalone sidebar help
 section. The tab-bar reminder uses an existing row and leaves terminal space
 available; on narrow windows Herdr gives tabs priority over the reminder.
 
+## Markdown in Herdr App
+
+The desktop app's `my-main` toolbar also shows separate Corpus Christi, Barcelona,
+and Dubai clock buttons immediately left of the **+** button. They use 24-hour time,
+refresh each minute, and follow daylight saving rules automatically. Hover
+or click a clock for its local date and timezone. The personal `world-clock-tabs`
+mod uses local Python 3.9+ and system timezone data; no network service is needed.
+Sun icons indicate 06:00–17:59 local time, and moon icons indicate 18:00–05:59;
+these are local-hours indicators, not calculated sunrise or sunset times.
+
+In the desktop `herdr-app`, the personal `my-main` layout uses the
+`glow-files` mod for its **Files** panel. Click a `.md` or `.markdown` file
+(case-insensitive) to open Glow in a new pane to the right of the focused pane. Other files
+still open in the panel's read-only source preview.
+
+Glow uses the light or dark style matching Herdr when the pane opens, with
+an 80-column wrap width. Press `?` inside Glow for navigation help and `q`
+to leave the viewer; close the pane when finished. Each click opens a new pane.
+For remote spaces, Glow must be installed on that machine's PATH too.
+
+The personal mod is cloned from Herdr's Files mod and survives app updates;
+it does not automatically inherit future changes to the shipped Files mod.
+To restore the stock preview, change the `files` block's `content.mod` from
+`glow-files` to `files` in `.config/herdr-app/layouts/my-main.json`.
+
 ## Agent chooser
 
 Press **Hyper+O**:

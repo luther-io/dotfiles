@@ -51,6 +51,13 @@ result
 !.config/herdr-app/mods/git-status/
 .config/herdr-app/mods/git-status/gpui-kit.d.ts
 .config/herdr-app/mods/git-status/jsconfig.json
+!.config/herdr-app/mods/glow-files/
+.config/herdr-app/mods/glow-files/gpui-kit.d.ts
+.config/herdr-app/mods/glow-files/jsconfig.json
+!.config/herdr-app/mods/world-clock-tabs/
+.config/herdr-app/mods/world-clock-tabs/gpui-kit.d.ts
+.config/herdr-app/mods/world-clock-tabs/jsconfig.json
+.config/herdr-app/mods/world-clock-tabs/__pycache__/
 .config/openlogi/*
 !.config/openlogi/config.toml
 .config/opencode/package-lock.json

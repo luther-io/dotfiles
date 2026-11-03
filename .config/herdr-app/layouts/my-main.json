@@ -90,7 +90,7 @@
           "id": "tabs",
           "type": "block",
           "content": {
-            "mod": "tabs"
+            "mod": "world-clock-tabs"
           },
           "size": {
             "px": 42
@@ -142,7 +142,7 @@
                       "id": "files",
                       "type": "block",
                       "content": {
-                        "mod": "files"
+                        "mod": "glow-files"
                       }
                     },
                     {
