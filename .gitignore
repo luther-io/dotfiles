@@ -63,6 +63,12 @@ result
 .config/herdr-app/mods/world-clock-tabs/gpui-kit.d.ts
 .config/herdr-app/mods/world-clock-tabs/jsconfig.json
 .config/herdr-app/mods/world-clock-tabs/__pycache__/
+!.config/herdr-app/mods/weather/
+.config/herdr-app/mods/weather/gpui-kit.d.ts
+.config/herdr-app/mods/weather/jsconfig.json
+!.config/herdr-app/mods/my-spaces/
+.config/herdr-app/mods/my-spaces/gpui-kit.d.ts
+.config/herdr-app/mods/my-spaces/jsconfig.json
 .config/openlogi/*
 !.config/openlogi/config.toml
 .config/opencode/package-lock.json

@@ -22,6 +22,16 @@
           "window_drag": true
         },
         {
+          "id": "weather",
+          "type": "block",
+          "content": {
+            "mod": "weather"
+          },
+          "size": {
+            "px": 92
+          }
+        },
+        {
           "id": "sidebar-lists",
           "type": "column",
           "children": [
@@ -29,7 +39,7 @@
               "id": "spaces",
               "type": "block",
               "content": {
-                "mod": "spaces"
+                "mod": "my-spaces"
               },
               "size": {
                 "weight": 1
