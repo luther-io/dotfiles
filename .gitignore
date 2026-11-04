@@ -17,6 +17,8 @@ result
 .claude/jobs/
 .claude/security/
 .claude/settings.local.json
+.claude/policy-limits.json*
+.claude/remote-settings.json*
 .claude/shell-snapshots
 .claude/sessions
 .claude/skills
