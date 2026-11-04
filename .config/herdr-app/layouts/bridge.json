@@ -5,6 +5,9 @@
     "version": "0.1.11"
   },
   "type": "row",
+  "theme": "github-dark-colorblind",
+  "font": "Menlo",
+  "font_size": 13,
   "children": [
     {
       "id": "sidebar",
