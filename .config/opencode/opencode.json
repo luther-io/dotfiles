@@ -16,10 +16,6 @@
           "-c",
           "exec \"$HOME/bin/remctl\" mcp"
         ]
-      },
-      "grim": {
-        "type": "remote",
-        "url": "https://grimnotes.app/mcp"
       }
     }
   }
