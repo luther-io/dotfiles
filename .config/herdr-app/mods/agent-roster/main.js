@@ -394,9 +394,8 @@ export default class Agents extends View {
       .size_full()
       .min_h(0)
       .bg(t.chrome)
-      .border_t(1)
-      .border_color(t.border)
       .text_size(13)
+      .when(!collapsed, (el) => el.child(div().flex_none().h(1).mx(16).bg(t.border)))
       .when(!collapsed, (el) =>
         el.child(
           h_flex()

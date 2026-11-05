@@ -1,5 +1,5 @@
 {
-  "background": "#0d1117",
+  "background": "#131519",
   "foreground": "#e6edf3",
   "selection": "#264f78",
   "cursor": "#2f81f7",
@@ -8,7 +8,7 @@
     "#6e7681", "#ffa198", "#56d364", "#e3b341", "#79c0ff", "#d2a8ff", "#56d4dd", "#ffffff"
   ],
   "colors": {
-    "canvas": "#0c0e11",
+    "canvas": "#131519",
     "chrome": "#131519",
     "surface": "#0f1319",
     "raised": "#1e2023",

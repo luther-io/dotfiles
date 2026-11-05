@@ -56,7 +56,7 @@ export default class Weather extends View {
     const area = [weather?.region, weather?.country].filter(Boolean).join(" · ");
     const location = [weather?.city, weather?.region, weather?.country].filter(Boolean).join(", ");
     const root = v_flex().id("weather-root").size_full().min_w(0).bg(t.chrome)
-      .border_b(1).border_color(t.border).text_size(12);
+      .text_size(12);
     if ((find(layout(), "sidebar")?.size?.px ?? Infinity) < 160) {
       return root.items_center().justify_center().text_size(18).text_color(stale ? t.dim : t.foreground).child(icon);
     }

@@ -213,10 +213,11 @@ export default class GitStatus extends View {
 
   render() {
     const t = theme();
-    const root = v_flex().id("git-status-root").size_full().min_h(0).bg(t.chrome).border_t(1).border_color(t.border).text_size(12);
+    const root = v_flex().id("git-status-root").size_full().min_h(0).bg(t.chrome).text_size(12);
     // Folded to the icon rail, there's no room to read it.
     if ((find(layout(), "sidebar")?.size?.px ?? Infinity) < 160) return root;
 
+    root.child(div().flex_none().h(1).mx(16).bg(t.border));
     const g = this.git;
     const heading = h_flex().id("git-status-heading").h(31).flex_none().pl(16).pr(10).items_center().font_medium().text_color(t.muted).child(g?.butler ? "GitButler" : "Git");
     const body = v_flex().id("git-status-body").flex_1().min_h(0).px(16).pb(8).gap(3).overflow_y_scroll();
