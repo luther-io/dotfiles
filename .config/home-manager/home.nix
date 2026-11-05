@@ -110,15 +110,6 @@
       set -gx OPENCODE_EXPERIMENTAL_OXFMT true
     '';
 
-    # Keep GH_TOKEN/GITHUB_TOKEN in sync with gh's keyring token so CLI tools
-    # never see a stale PAT. Interactive-only to keep script startup fast.
-    interactiveShellInit = ''
-      if command -q gh
-        set -gx GH_TOKEN (gh auth token 2>/dev/null)
-        set -gx GITHUB_TOKEN $GH_TOKEN
-      end
-    '';
-
     functions =
       let
         # Wrap an agent CLI so each account gets its own isolated
