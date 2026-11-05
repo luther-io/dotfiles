@@ -5,7 +5,7 @@
     "version": "0.1.11"
   },
   "type": "row",
-  "theme": "github-dark-colorblind",
+  "theme": "merino-dark",
   "font": "Menlo",
   "font_size": 13,
   "children": [
