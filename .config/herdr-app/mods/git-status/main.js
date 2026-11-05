@@ -136,14 +136,52 @@ export default class GitStatus extends View {
       info.repo = repoName(common ?? top);
       info.common = common;
       info.linked = common !== `${top}/.git`;
-      const log = await git("log", "-1", "--format=%h%x1f%ct%x1f%s");
-      if (log.code === 0 && log.stdout.trim()) {
-        const [hash, time, ...subject] = log.stdout.trim().split("\x1f");
-        info.commit = { hash, time: Number(time), subject: subject.join(" ") };
+      if (info.branch === "gitbutler/workspace") {
+        await this.butler(info, { cwd, on });
+      } else {
+        const log = await git("log", "-1", "--format=%h%x1f%ct%x1f%s");
+        if (log.code === 0 && log.stdout.trim()) {
+          const [hash, time, ...subject] = log.stdout.trim().split("\x1f");
+          info.commit = { hash, time: Number(time), subject: subject.join(" ") };
+        }
       }
       return info;
     } catch {
       return null;
+    }
+  }
+
+  async butler(info, options) {
+    const b = info.butler = { branches: null, target: null, behind: 0 };
+    try {
+      const result = await exec("but", ["status", "--json"], options);
+      if (result.code !== 0) throw new Error("GitButler status failed");
+      const status = JSON.parse(result.stdout);
+      if (!Array.isArray(status.stacks)) throw new Error("Unknown GitButler status format");
+      const branches = status.stacks.flatMap((s) => s.branches);
+      if (branches.some((branch) => typeof branch?.name !== "string")) throw new Error("Unknown GitButler branch format");
+      b.branches = branches.map((branch) => ({ name: branch.name, unpublished: branch.branchStatus === "completelyUnpushed" }));
+      b.behind = Number(status.upstreamState?.behind) || 0;
+      for (const branch of branches) {
+        for (const commit of branch.commits ?? []) {
+          const time = Date.parse(commit.createdAt) / 1000;
+          if (Number.isFinite(time) && (!info.commit || time > info.commit.time)) {
+            info.commit = { hash: commit.commitId?.slice(0, 7), time, subject: (commit.message ?? "").split("\n")[0] };
+          }
+        }
+      }
+    } catch {
+      // Keep the Git file list usable if but is missing or its output changes.
+      b.branches = null;
+    }
+    try {
+      const result = await exec("but", ["config", "target", "--json"], options);
+      if (result.code === 0) {
+        const target = JSON.parse(result.stdout);
+        if (typeof target.branch === "string" && target.branch) b.target = target.branch;
+      }
+    } catch {
+      b.target = null;
     }
   }
 
@@ -157,7 +195,8 @@ export default class GitStatus extends View {
       try {
         while (this.watching === repo) {
           await watchFolder(repo);
-          if (this.watching === repo) this.refresh(cx);
+          // GitButler status can update its metadata; don't re-query our own writes.
+          if (this.watching === repo && Date.now() - this.checked > 1000) this.refresh(cx);
         }
       } catch {
         if (this.watching === repo) this.watching = null;
@@ -179,12 +218,13 @@ export default class GitStatus extends View {
     if ((find(layout(), "sidebar")?.size?.px ?? Infinity) < 160) return root;
 
     const g = this.git;
-    const heading = h_flex().id("git-status-heading").h(31).flex_none().pl(16).pr(10).items_center().font_medium().text_color(t.muted).child("Git");
+    const heading = h_flex().id("git-status-heading").h(31).flex_none().pl(16).pr(10).items_center().font_medium().text_color(t.muted).child(g?.butler ? "GitButler" : "Git");
     const body = v_flex().id("git-status-body").flex_1().min_h(0).px(16).pb(8).gap(3).overflow_y_scroll();
     if (g === undefined) return root.child(heading).child(body.child(div().text_color(t.dim).child("Looking…")));
     if (g === null) return root.child(heading).child(body.child(div().text_color(t.dim).child("Not a git repository")));
 
     const branch = g.branch === "(detached)" ? `detached ${g.oid?.slice(0, 7) ?? ""}` : g.branch;
+    const branches = g.butler?.branches ?? [{ name: branch ?? "" }];
     const count = (n, word, color) => n > 0 ? div().flex_none().text_color(color).child(`${n} ${word}`) : null;
     const changes = [
       count(g.conflicts, "conflicts", t.blocked),
@@ -197,14 +237,20 @@ export default class GitStatus extends View {
       .child(h_flex().gap(6).items_center()
         .child(div().min_w(0).truncate().font_medium().text_size(13).text_color(t.foreground).child(g.repo))
         .when(g.linked, (el) => el.child(div().flex_none().text_color(t.dim).child("worktree"))))
-      .child(h_flex().gap(6).items_center()
+      .children(branches.map((b) => h_flex().gap(6).items_center()
         .child(svg("mods/workspace-chrome/branch.svg").size(12).flex_none().text_color(t.dim))
-        .child(div().min_w(0).flex_1().truncate().text_color(t.foreground).child(branch ?? ""))
-        .when(g.ahead > 0, (el) => el.child(div().flex_none().text_color(t.ansi2).child(`↑${g.ahead}`)))
-        .when(g.behind > 0, (el) => el.child(div().flex_none().text_color(t.ansi1).child(`↓${g.behind}`))))
+        .child(div().min_w(0).flex_1().truncate().text_color(t.foreground).child(b.name))
+        .when(b.unpublished, (el) => el.child(div().flex_none().text_color(t.dim).child("unpublished")))
+        .when(!g.butler && g.ahead > 0, (el) => el.child(div().flex_none().text_color(t.ansi2).child(`↑${g.ahead}`)))
+        .when(!g.butler && g.behind > 0, (el) => el.child(div().flex_none().text_color(t.ansi1).child(`↓${g.behind}`)))))
+      .when(g.butler?.branches === null, (el) => el.child(div().text_color(t.dim).child("GitButler details unavailable")))
+      .when(branches.length === 0, (el) => el.child(div().text_color(t.dim).child("No applied branches")))
       .child(h_flex().gap(6).items_center()
         .child(svg("mods/git-status/cloud.svg").size(12).flex_none().text_color(t.dim))
-        .child(div().min_w(0).flex_1().truncate().text_color(t.dim).child(g.upstream ?? "No upstream")))
+        .child(div().min_w(0).flex_1().truncate().text_color(t.dim).child(g.butler
+          ? (g.butler.target ? `Target: ${g.butler.target}` : "Target unavailable")
+          : (g.upstream ?? "No upstream")))
+        .when(g.butler?.behind > 0, (el) => el.child(div().flex_none().text_color(t.ansi1).child(`↓${g.butler.behind}`))))
       .when(Boolean(g.commit), (el) => el.child(h_flex().gap(6).items_center().text_color(t.dim)
         .child(div().min_w(0).flex_1().truncate().child(g.commit.subject))
         .child(div().flex_none().child(ago(g.commit.time)))))
