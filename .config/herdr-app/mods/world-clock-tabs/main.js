@@ -7,6 +7,7 @@ const CLOCKS = [
   { city: "Phoenix", zone: "America/Phoenix", width: 138 },
   { city: "Corpus Christi", zone: "America/Chicago", width: 170 },
   { city: "NYC", zone: "America/New_York", width: 112 },
+  { city: "UTC", zone: "UTC", width: 112 },
   { city: "Barcelona", zone: "Europe/Madrid", width: 148 },
   { city: "Dubai", zone: "Asia/Dubai", width: 122 },
 ];
