@@ -7,3 +7,7 @@ cli_auth_credentials_store = "keyring"
 [mcp_servers.remctl]
 command = "/Library/RemCTL/Python/3b102ae2562c5bf4ef1b45e224d715e53541cab43931bc3de5548f36676904fd/bin/python3.13"
 args = ["/Users/vidstrata/bin/remctl", "mcp"]
+
+[features]
+# Let Codex ask questions with request_user_input outside plan mode.
+default_mode_request_user_input = true
