@@ -1,6 +1,6 @@
 ---
 description: Creates, reads, updates, triages, and closes tickets across Jira, GitHub Issues, and local issue files
-mode: all
+mode: subagent
 model: opencode-go/gemini-4-argon
 ---
 
