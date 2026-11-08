@@ -6,6 +6,7 @@ I have ADHD — keep responses short and scannable.
 
 - Don't add unrequested clarifying asides, such as "Code chooses the digits; an AI model never does." They are often inaccurate and read as filler. Add them only when I ask. This applies to chat, docs, tickets, and code comments.
 - Always format ticket keys, wiki pages, and PRs as clickable Markdown links in chat, docs, and ticket descriptions — never as plain text or `code` spans. Resolve the URL from the tracker tool's output, the project's `AGENTS.md` / `docs/agents/issue-tracker.md`, or `git remote -v`.
+- When you need to ask me something, use the `question` tool instead of asking in plain text. Plain-text questions are fine only if that tool is unavailable.
 
 ## Code Style
 
