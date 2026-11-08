@@ -12,7 +12,8 @@
     "sidebar": "hide"
   },
   "tabs": {
-    "mode": "off",
+    "mode": "on",
+    "scope": "cwd",
     "layout": "horizontal"
   },
   "diffs": {
