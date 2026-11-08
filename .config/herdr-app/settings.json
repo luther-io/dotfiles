@@ -1,7 +1,7 @@
 {
   "zoom": 1,
   "sounds": {
-    "enabled": true,
+    "enabled": false,
     "done": "sounds/silent.mp3"
   },
   "minimum_contrast": 1
