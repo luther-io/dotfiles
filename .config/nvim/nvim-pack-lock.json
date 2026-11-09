@@ -1,5 +1,13 @@
 {
   "plugins": {
+    "bufferline.nvim": {
+      "rev": "655133c3b4c3e5e05ec549b9f8cc2894ac6f51b3",
+      "src": "https://github.com/akinsho/bufferline.nvim"
+    },
+    "mini.clue": {
+      "rev": "57f1f9542e8f7f0c3325825359939410940c55fc",
+      "src": "https://github.com/nvim-mini/mini.clue"
+    },
     "nvim-tree.lua": {
       "rev": "69eb0c34ed3d836d5a0d92d913b77dd73b054f2f",
       "src": "https://github.com/nvim-tree/nvim-tree.lua"
