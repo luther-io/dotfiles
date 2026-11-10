@@ -1,0 +1,47 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      - name: Agent rules match their source
+        run: |
+          bash agent-rules/build.sh
+          git diff --exit-code -- .claude/claude.md .codex/AGENTS.md .config/opencode/AGENTS.md
+
+      - name: JSON files parse
+        # Zed's settings.json is JSONC, which jq cannot parse.
+        run: git ls-files -z '*.json' ':!:.config/zed/settings.json' | xargs -0 -n1 jq empty
+
+      - name: Renovate config is valid
+        run: npx --yes --package renovate -- renovate-config-validator --strict --no-global renovate.json
+
+      - name: Herdr mod tests
+        run: node --test .config/herdr-app/mods/*/*.test.mjs
+
+      - name: Shell scripts
+        # herdr-agent-state.sh is generated and overwritten by Herdr.
+        run: |
+          git ls-files -z '*.sh' ':!:.claude/hooks/herdr-agent-state.sh' \
+            | xargs -0 shellcheck --severity=warning

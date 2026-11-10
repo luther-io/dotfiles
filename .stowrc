@@ -13,3 +13,5 @@
 --ignore=flake.lock
 --ignore=^[.]config/git$
 --ignore=^agent-rules$
+--ignore=^[.]github$
+--ignore=^renovate[.]json$
