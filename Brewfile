@@ -66,8 +66,6 @@ brew "stow"
 brew "supabase"
 # User interface to the TELNET protocol
 brew "telnet"
-# Terminal multiplexer
-brew "tmux"
 # Ultra fast grep with query UI, fuzzy search, archive search, and more
 brew "ugrep"
 # Extremely fast Python package installer and resolver, written in Rust

@@ -35,7 +35,8 @@ Ghostty renders the terminal. Herdr keeps its terminal processes running when th
 | [`.config/opencode/`](.config/opencode/) | OpenCode settings, agent instructions, and Herdr TUI integration. |
 | [`.claude/`](.claude/) | Claude Code settings, instructions, status line, output styles, and Herdr session hook. |
 | [`.codex/`](.codex/) | Codex configuration. |
-| [`.config/zed/`](.config/zed/), [`.config/tmux/`](.config/tmux/), [`iterm2/`](iterm2/) | Editor and alternative terminal/multiplexer settings. |
+| [`agent-rules/`](agent-rules/) | Source for the Claude, Codex, and OpenCode global rules. Edit here, then run `agent-rules/build.sh`. |
+| [`.config/zed/`](.config/zed/), [`iterm2/`](iterm2/) | Editor and alternative terminal settings. |
 | [`.config/nix/`](.config/nix/) | Nix client configuration. |
 
 ## Configuration ownership
