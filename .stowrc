@@ -12,3 +12,4 @@
 --ignore=flake.nix
 --ignore=flake.lock
 --ignore=^[.]config/git$
+--ignore=^agent-rules$

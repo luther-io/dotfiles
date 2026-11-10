@@ -16,14 +16,12 @@
     ripgrep
     glow
     jq
-    gh
     neovim
     fnm
     pnpm
     go
     osv-scanner
     ruby
-    direnv
     oxlint
     oxfmt
     nil
@@ -110,60 +108,13 @@
       set -gx OPENCODE_EXPERIMENTAL_OXFMT true
     '';
 
-    functions =
-      let
-        # Wrap an agent CLI so each account gets its own isolated
-        # credential store (CLAUDE_CONFIG_DIR / CODEX_HOME).
-        mkAgentAccount = { wraps, configDirEnv, configDir, description }: {
-          inherit wraps description;
-          body = ''
-            set -lx ${configDirEnv} "${configDir}"
-            mkdir -p "${configDir}"
-            command ${wraps} $argv
-          '';
-        };
-
-        claudeWork = mkAgentAccount {
-          wraps = "claude";
-          configDirEnv = "CLAUDE_CONFIG_DIR";
-          configDir = "$HOME/.claude-work";
-          description = "run Claude with the work account";
-        };
-        claudePersonal = mkAgentAccount {
-          wraps = "claude";
-          configDirEnv = "CLAUDE_CONFIG_DIR";
-          configDir = "$HOME/.claude";
-          description = "run Claude with the personal account";
-        };
-        codexPersonal = mkAgentAccount {
-          wraps = "codex";
-          configDirEnv = "CODEX_HOME";
-          configDir = "$HOME/.codex-personal";
-          description = "run Codex with the personal account";
-        };
-        codexWork = mkAgentAccount {
-          wraps = "codex";
-          configDirEnv = "CODEX_HOME";
-          configDir = "$HOME/.codex-work";
-          description = "run Codex with the work account";
-        };
-      in
-      {
-        vim = {
-          wraps = "nvim";
-          description = "alias vim nvim";
-          body = "nvim $argv";
-        };
-
-        claude-work = claudeWork;
-        work-claude = claudeWork;
-        personal-claude = claudePersonal;
-
-        # Keep personal and work Codex logins in separate credential stores.
-        codex = codexPersonal;
-        personal-codex = codexPersonal;
-        work-codex = codexWork;
+    functions = {
+      vim = {
+        wraps = "nvim";
+        description = "alias vim nvim";
+        body = "nvim $argv";
       };
+    };
   };
 
   # ---------------------------------------------------------------------------
@@ -262,13 +213,6 @@
         symbol = "";
         style = "bg:#0d1117";
         format = "[[ $symbol ($version) ](fg:#58a6ff bg:#0d1117)]($style)";
-      };
-
-      time = {
-        disabled = true;
-        time_format = "%R";
-        style = "bg:#161b22";
-        format = "[[  $time ](fg:#79c0ff bg:#161b22)]($style)";
       };
 
       character = {

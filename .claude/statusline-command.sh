@@ -12,7 +12,7 @@ if [ -z "$input" ]; then
     exit 0
 fi
 
-# ── Palette: GitHub theme from ~/.config/starship.toml ──────────
+# ── Palette: GitHub theme, matching the Starship prompt in home.nix ─
 accent='\033[38;2;31;111;235m'    # #1f6feb  starship accent block
 git_green='\033[38;2;63;185;80m'  # #3fb950  starship git_branch fg
 warn='\033[38;2;247;129;102m'     # #f78166  starship git_status fg
@@ -132,7 +132,7 @@ fi
 thinking_on=false
 output_style=$(echo "$input" | jq -r '.output_style.name // empty' 2>/dev/null)
 effort=""
-settings_path="$HOME/.claude/settings.json"
+settings_path="${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json"
 if [ -f "$settings_path" ]; then
     # IFS=tab, not the default — style names may contain spaces.
     IFS=$'\t' read -r thinking_val settings_style effort <<<"$(jq -r '[(.alwaysThinkingEnabled // false), (.outputStyle // "-"), (.effortLevel // "-")] | @tsv' "$settings_path" 2>/dev/null)"
